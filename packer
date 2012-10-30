@@ -473,6 +473,11 @@ packageargs=()
 while [[ $1 ]]; do
   case "$1" in
 
+    -R* | -D* | -U* | -Sc*)
+      runasroot $PACMAN "$@"
+      exit $?
+    ;;
+
     -S*)
       [[ $1 =~ 'a' ]] && incaur='1'
       case "$1" in
@@ -498,7 +503,10 @@ while [[ $1 ]]; do
     '--skipinteg') MAKEPKGOPTS="--skipinteg" ;;
     '--preview') preview='1' ;;
     '--') shift ; packageargs+=("$@") ; break ;;
-    -*) echo "packer: Option \`$1' is not valid." ; exit 5 ;;
+    -*)
+      $PACMAN "$@"
+      exit $?
+    ;;
     *) packageargs+=("$1") ;;
   esac
   shift
