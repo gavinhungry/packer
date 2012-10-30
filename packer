@@ -599,13 +599,6 @@ if [[ $option = update ]]; then
 
   echo -e "${COLOR5}:: ${COLOR1}Starting full aur upgrade...${ENDCOLOR}"
 
-  # Check and output ignored package update info
-  for package in "${checkignores[@]}"; do
-    if aurversionisnewer "${package%% *}" "${package##* }"; then
-      echo -e "${COLOR6}warning:${ENDCOLOR} $package: ignoring package upgrade (${package##* } => $aurversion)"
-    fi
-  done
-
   # Now for the installation part
   if [[ $newpackages ]]; then
     auronly='1'
