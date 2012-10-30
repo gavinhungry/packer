@@ -489,14 +489,14 @@ while [[ $1 ]]; do
 
     -S*)
       [[ $1 =~ 'a' ]] && incaur='1'
-      case "$1" in
+      case "${1/a/}" in
         '-S') option=install ;;
         '-Sdd') option=install ; PACOPTS+=("--nodeps"); MAKEPKGOPTS+=("--nodeps");&
         '-Sd')  option=install ; PACOPTS+=("--nodeps"); MAKEPKGOPTS+=("--nodeps");;
         '-Ss') option=search ;;
         '-Ssq'|'-Sqs') option=search ; quiet='1' ;;
         '-Si') option=info ;;
-        -S*u*) option=update ; pacmanarg="$1" ;;
+        -S*u*) option=update ; pacmanarg="${1/a/}" ;;
       esac ;;
 
     '-G') option=download ;;
