@@ -540,71 +540,71 @@ if [[ $option = update ]]; then
   fi
 
   if [[ $incaur ]]; then
-  # Aur update
-  echo -e "${COLOR5}:: ${COLOR1}Synchronizing AUR packages...${ENDCOLOR}"
-  IFS=$'\n' read -rd '' -a packages < <(pacman -Qm)
-  newpackages=()
-  checkignores=()
-  total="${#packages[@]}"
-  grep -q '^ *ILoveCandy' "$pacmanconf" && bartype='candy' || bartype='normal'
+    # Aur update
+    echo -e "${COLOR5}:: ${COLOR1}Synchronizing AUR packages...${ENDCOLOR}"
+    IFS=$'\n' read -rd '' -a packages < <(pacman -Qm)
+    newpackages=()
+    checkignores=()
+    total="${#packages[@]}"
+    grep -q '^ *ILoveCandy' "$pacmanconf" && bartype='candy' || bartype='normal'
 
-  if [[ $devel ]]; then
-    for ((i=0; i<$total; i++)); do 
-      aurbar "$((i+1))" "$total" "$bartype"
-      pkg="${packages[i]%% *}"
-      if isignored "$pkg"; then
-        checkignores+=("${packages[i]}")
-        continue
+    if [[ $devel ]]; then
+      for ((i=0; i<$total; i++)); do 
+        aurbar "$((i+1))" "$total" "$bartype"
+        pkg="${packages[i]%% *}"
+        if isignored "$pkg"; then
+          checkignores+=("${packages[i]}")
+          continue
+        fi
+        pkginfo "$pkg" &
+        nap
+      done
+      wait
+      for ((i=0; i<$total; i++)); do 
+        pkg="${packages[i]%% *}"
+        ver="${packages[i]##* }"
+        if [[ ! -s "$tmpdir/$pkg.PKGBUILD" ]]; then
+          continue
+        fi
+        if isignored "$pkg"; then
+          continue
+        fi
+        unset _darcstrunk _cvsroot _gitroot _svntrunk _bzrtrunk _hgroot
+        . "$tmpdir/$pkg.PKGBUILD"
+        if [[ "$(LC_ALL=C vercmp "$pkgver-$pkgrel" "$ver")" -gt 0 ]]; then
+          newpackages+=("$pkg")
+        elif [[ ${_darcstrunk} || ${_cvsroot} || ${_gitroot} || ${_svntrunk} || ${_bzrtrunk} || ${_hgroot} ]]; then 
+          newpackages+=("$pkg")
+        fi
+      done
+    else
+      for ((i=0; i<$total; i++)); do 
+        aurbar "$((i+1))" "$total" "$bartype"
+        pkg="${packages[i]%% *}"
+        rpcinfo "$pkg" &
+        nap
+      done
+      wait
+      for ((i=0; i<$total; i++)); do
+        pkg="${packages[i]%% *}"
+        ver="${packages[i]##* }"
+        if isignored "$pkg"; then
+          checkignores+=("${packages[i]}")
+        elif aurversionisnewer "$pkg" "$ver"; then
+          newpackages+=("$pkg")
       fi
-      pkginfo "$pkg" &
-      nap
-    done
-    wait
-    for ((i=0; i<$total; i++)); do 
-      pkg="${packages[i]%% *}"
-      ver="${packages[i]##* }"
-      if [[ ! -s "$tmpdir/$pkg.PKGBUILD" ]]; then
-        continue
-      fi
-      if isignored "$pkg"; then
-        continue
-      fi
-      unset _darcstrunk _cvsroot _gitroot _svntrunk _bzrtrunk _hgroot
-      . "$tmpdir/$pkg.PKGBUILD"
-      if [[ "$(LC_ALL=C vercmp "$pkgver-$pkgrel" "$ver")" -gt 0 ]]; then
-        newpackages+=("$pkg")
-      elif [[ ${_darcstrunk} || ${_cvsroot} || ${_gitroot} || ${_svntrunk} || ${_bzrtrunk} || ${_hgroot} ]]; then 
-        newpackages+=("$pkg")
-      fi
-    done
-  else
-    for ((i=0; i<$total; i++)); do 
-      aurbar "$((i+1))" "$total" "$bartype"
-      pkg="${packages[i]%% *}"
-      rpcinfo "$pkg" &
-      nap
-    done
-    wait
-    for ((i=0; i<$total; i++)); do
-      pkg="${packages[i]%% *}"
-      ver="${packages[i]##* }"
-      if isignored "$pkg"; then
-        checkignores+=("${packages[i]}")
-      elif aurversionisnewer "$pkg" "$ver"; then
-        newpackages+=("$pkg")
+      done
     fi
-    done
-  fi
-  echo
+    echo
 
-  echo -e "${COLOR5}:: ${COLOR1}Starting full AUR upgrade...${ENDCOLOR}"
+    echo -e "${COLOR5}:: ${COLOR1}Starting full AUR upgrade...${ENDCOLOR}"
 
-  # Now for the installation part
-  if [[ $newpackages ]]; then
-    auronly='1'
-    installhandling "${newpackages[@]}"
-  fi
-  echo " local database is up to date"
+    # Now for the installation part
+    if [[ $newpackages ]]; then
+      auronly='1'
+      installhandling "${newpackages[@]}"
+    fi
+    echo " local database is up to date"
   fi
 fi
 
