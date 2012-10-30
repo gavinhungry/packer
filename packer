@@ -468,11 +468,16 @@ nap() {
 packageargs=()
 while [[ $1 ]]; do
   case "$1" in
-    '-S') option=install ;;
-    '-Ss') option=search ;;
-    '-Ssq'|'-Sqs') option=search ; quiet='1' ;;
-    '-Si') option=info ;;
-    -S*u*) option=update ; pacmanarg="$1" ;;
+
+    -S*)
+      case "$1" in
+        '-S') option=install ;;
+        '-Ss') option=search ;;
+        '-Ssq'|'-Sqs') option=search ; quiet='1' ;;
+        '-Si') option=info ;;
+        -S*u*) option=update ; pacmanarg="$1" ;;
+      esac ;;
+
     '-G') option=download ;;
     '-h'|'--help') usage ;;
     '--quiet') quiet='1' ;;
