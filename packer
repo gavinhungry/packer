@@ -317,6 +317,8 @@ aurinstall() {
   . PKGBUILD
   confirm_edit "${COLOR6}Edit $install with \$EDITOR? [Y/n]${ENDCOLOR} " "$install"
 
+  [[ $(uname -m) == arm* ]] && MAKEPKGOPTS+=("--ignorearch")
+
   # Installation (makepkg and pacman)
   if [[ $UID -eq 0 ]]; then
     makepkg $MAKEPKGOPTS --asroot -f
