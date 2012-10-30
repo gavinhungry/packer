@@ -647,23 +647,28 @@ if [[ $option = search || $option = searchinstall ]]; then
     pactotal=0
   fi
 
-  # Aur searching and tmpfile preparation
-  for package in "${packageargs[@]}"; do
-    curl -LfGs --data-urlencode "arg=$package" "$RPCURL=search" | \
-    jshon -Q -e results -a -e Name -u -p -e Version -u -p -e NumVotes -u -p -e Description -u | \
-    sed 's/^$/-/' |  paste -s -d "\t\t\t\n" | sort -nr -k 3 > "$tmpdir/$package.search" &
-  done
-  wait
-  cp "$tmpdir/${packageargs[0]}.search" "$tmpdir/search.results"
-  for ((i=1 ; i<${#packageargs[@]} ; i++)); do
-    grep -xFf "$tmpdir/search.results" "$tmpdir/${packageargs[$i]}.search" > "$tmpdir/search.results-2"
-    mv "$tmpdir/search.results-2" "$tmpdir/search.results"
-  done
-  sed -i '/^$/d' "$tmpdir/search.results"
+  if [[ $incaur ]]; then
+    # Aur searching and tmpfile preparation
+    for package in "${packageargs[@]}"; do
+      curl -LfGs --data-urlencode "arg=$package" "$RPCURL=search" | \
+      jshon -Q -e results -a -e Name -u -p -e Version -u -p -e NumVotes -u -p -e Description -u | \
+      sed 's/^$/-/' |  paste -s -d "\t\t\t\n" | sort -nr -k 3 > "$tmpdir/$package.search" &
+    done
+    wait
+    cp "$tmpdir/${packageargs[0]}.search" "$tmpdir/search.results"
+    for ((i=1 ; i<${#packageargs[@]} ; i++)); do
+      grep -xFf "$tmpdir/search.results" "$tmpdir/${packageargs[$i]}.search" > "$tmpdir/search.results-2"
+      mv "$tmpdir/search.results-2" "$tmpdir/search.results"
+    done
+    sed -i '/^$/d' "$tmpdir/search.results"
 
-  # Prepare tmp file and arrays
-  IFS=$'\n' read -rd '' -a aurname < <(cut -f 1 "$tmpdir/search.results")
-  aurtotal="${#aurname[@]}"
+    # Prepare tmp file and arrays
+    IFS=$'\n' read -rd '' -a aurname < <(cut -f 1 "$tmpdir/search.results")
+    aurtotal="${#aurname[@]}"
+  else
+    aurtotal=0;
+  fi
+
   alltotal="$(($pactotal+$aurtotal))"
   # Echo out the -Ss formatted package information
 
@@ -694,8 +699,7 @@ if [[ $option = search || $option = searchinstall ]]; then
 
     # Prompt for numbers
     echo
-    echo -e "${COLOR2}Type numbers to install. Separate each number with a space.${ENDCOLOR}"
-    echo -ne "${COLOR2}Numbers: ${ENDCOLOR}"
+    echo -ne "${COLOR1}Install: ${ENDCOLOR}"
     read -r
     
     # Parse answer
@@ -703,8 +707,6 @@ if [[ $option = search || $option = searchinstall ]]; then
       for num in $REPLY; do
         if [[ $num -lt $alltotal ]]; then
           pkglist+=("${allpackages[$num]}")
-        else
-          err "Number \`$num' is not assigned to any of the packages."
         fi
       done
     fi
