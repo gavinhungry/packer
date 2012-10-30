@@ -62,6 +62,7 @@ usage() {
   echo '    -G          - download and extract aur tarball only'
   echo
   echo '    --quiet     - only output package name for searches'
+  echo '    --force     - bypass file conflict checks'
   echo '    --ignore    - takes a comma-separated list of packages to ignore'
   echo '    --noconfirm - do not prompt for any confirmation'
   echo '    --noedit    - do not prompt to edit files'
@@ -485,6 +486,7 @@ while [[ $1 ]]; do
     '-G') option=download ;;
     '-h'|'--help') usage ;;
     '--quiet') quiet='1' ;;
+    '--force'|'-f') force='1'; PACOPTS+=("--force");;
     '--ignore') ignorearg="$2" ; PACOPTS+=("--ignore" "$2") ; shift ;;
     '--noconfirm') noconfirm='1' PACOPTS+=("--noconfirm");;
     '--noedit') noedit='1' ;;
