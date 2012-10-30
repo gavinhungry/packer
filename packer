@@ -245,7 +245,7 @@ pkginfo() {
     if [[ $2 ]]; then
       # rename for syntax highlighting
       ln -sf "$tmpdir/$1.PKGBUILD" "$tmpdir/PKGBUILD"
-      confirm_edit "${COLOR6}Edit $1 PKGBUILD with \$EDITOR? [Y/n]${ENDCOLOR} " "$tmpdir/PKGBUILD"
+      confirm_edit "${COLOR1}Edit $1 PKGBUILD? [y/N]${ENDCOLOR} " "$tmpdir/PKGBUILD"
       rm -f "$tmpdir/PKGBUILD"
     fi
   fi
@@ -275,7 +275,7 @@ confirm_edit() {
     return
   fi
   echo -en "$1"
-  if proceed; then
+  if proceed_explicit; then
     ${EDITOR:-vi} "$2"
   fi
 }
@@ -307,7 +307,7 @@ aurinstall() {
   fi
 
   # Allow user to edit PKGBUILD
-  confirm_edit "${COLOR6}Edit $1 PKGBUILD with \$EDITOR? [Y/n]${ENDCOLOR} " PKGBUILD
+  confirm_edit "${COLOR1}Edit $1 PKGBUILD? [y/N]${ENDCOLOR} " PKGBUILD
   if ! [[ -f PKGBUILD ]]; then
     err "No PKGBUILD found in directory."
   fi
@@ -315,7 +315,7 @@ aurinstall() {
   # Allow user to edit .install
   unset install
   . PKGBUILD
-  confirm_edit "${COLOR6}Edit $install with \$EDITOR? [Y/n]${ENDCOLOR} " "$install"
+  confirm_edit "${COLOR1}Edit $install? [y/N]${ENDCOLOR} " "$install"
 
   [[ $(uname -m) == arm* ]] && MAKEPKGOPTS+=("--ignorearch")
 
@@ -457,6 +457,15 @@ proceed() {
   case "$REPLY" in
     'Y'|'y'|'') return 0 ;;
     *)          return 1 ;;
+  esac
+}
+
+proceed_explicit() {
+  read -n 1
+  echo
+  case "$REPLY" in
+    'Y'|'y') return 0 ;;
+    *)       return 1 ;;
   esac
 }
 
