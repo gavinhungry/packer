@@ -541,7 +541,7 @@ if [[ $option = update ]]; then
 
   if [[ $incaur ]]; then
   # Aur update
-  echo -e "${COLOR5}:: ${COLOR1}Synchronizing aur database...${ENDCOLOR}"
+  echo -e "${COLOR5}:: ${COLOR1}Synchronizing AUR packages...${ENDCOLOR}"
   IFS=$'\n' read -rd '' -a packages < <(pacman -Qm)
   newpackages=()
   checkignores=()
@@ -597,7 +597,7 @@ if [[ $option = update ]]; then
   fi
   echo
 
-  echo -e "${COLOR5}:: ${COLOR1}Starting full aur upgrade...${ENDCOLOR}"
+  echo -e "${COLOR5}:: ${COLOR1}Starting full AUR upgrade...${ENDCOLOR}"
 
   # Now for the installation part
   if [[ $newpackages ]]; then
