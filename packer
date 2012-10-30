@@ -462,7 +462,7 @@ proceed() {
 
 # process busy loop
 nap() {
-  while (( $(jobs | wc -l) >= 8 )); do
+  while (( $(jobs | wc -l) >= 512 )); do
     jobs > /dev/null
   done
 }
