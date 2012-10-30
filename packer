@@ -730,7 +730,7 @@ if [[ $option = info ]]; then
       results="$(sed -r "s|^(Version[^:]*:)(.*)$|\1$S${COLOR2}\2$S${ENDCOLOR}|" <<< "$results")"
       results="$(sed -r "s|^(URL[^:]*:)(.*)$|\1$S${COLOR4}\2$S${ENDCOLOR}|" <<< "$results")"
       results="$(sed -r "s|^[^ ][^:]*:|$S${COLOR1}&$S${ENDCOLOR}|" <<< "$results")"
-      echo -e "$results"
+      echo -e "$results\n"
       exit
     else # Check to see if it is in the aur
       pkginfo "$package" "$preview"
