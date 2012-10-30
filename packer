@@ -407,16 +407,16 @@ installhandling() {
     
   # Prompt for aur packages and their dependencies
   echo
-  if [[ $aurdepends ]]; then
-    num="$((${#aurdepends[@]}+${#aurtargets[@]}))"
-    echo -e "${COLOR6}Aur Targets    ($num):${ENDCOLOR} ${aurdepends[@]} ${aurtargets[@]}"
-  else 
-    echo -e "${COLOR6}Aur Targets    ($((${#aurtargets[@]}))):${ENDCOLOR} ${aurtargets[@]}"
-  fi
   if [[ $pacmandepends ]]; then
     IFS=$'\n' read -rd '' -a pacmandepends < \
       <(printf "%s\n" "${pacmandepends[@]}" | sort -u)
-    echo -e "${COLOR6}Pacman Targets (${#pacmandepends[@]}):${ENDCOLOR} ${pacmandepends[@]}"
+    echo -e "${COLOR6}Targets (${#pacmandepends[@]}):${ENDCOLOR} ${pacmandepends[@]}"
+  fi
+  if [[ $aurdepends ]]; then
+    num="$((${#aurdepends[@]}+${#aurtargets[@]}))"
+    echo -e "${COLOR4}AUR ($num):${ENDCOLOR} ${aurdepends[@]} ${aurtargets[@]}"
+  else 
+    echo -e "${COLOR4}AUR ($((${#aurtargets[@]}))):${ENDCOLOR} ${aurtargets[@]}"
   fi
 
   # Prompt to proceed
