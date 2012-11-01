@@ -494,15 +494,19 @@ nap() {
 
 # Argument parsing
 [[ $1 ]] || usage
+if [[ $1 != -* ]]; then
+  $PACMAN "$@"
+  exit $?
+fi
+
 packageargs=()
 while [[ $1 ]]; do
   case "$1" in
-
+    -I) interactive=1 ;;
     -R* | -D* | -U* | -Sc*)
       runasroot $PACMAN "$@"
       exit $?
     ;;
-
     -S*)
       [[ $1 =~ 'a' ]] && incaur='1'
       case "${1/a/}" in
@@ -654,7 +658,7 @@ if [[ $option = search || $option = searchinstall ]]; then
     fi
     if [[ $option = search ]]; then
       echo -e "$results" | fmt -"$_WIDTH" -s
-    else  # interactive
+    elif [[ $interactive ]]; then  # interactive
       echo -e "$results" | fmt -"$_WIDTH" -s | nl -v 0 -w 1 -s ' ' -b 'p^[^ ]'
     fi | sed '/^$/d'
     pacname=( $(pacman -Ssq -- "${packageargs[@]}") )
@@ -699,7 +703,7 @@ if [[ $option = search || $option = searchinstall ]]; then
         printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR}%s\b \b${installed}${outofdate}\n    %s\n" $LINE
       done < "$tmpdir/search.results"
     fi
-  else
+  elif [[ $interactive ]]; then
     # interactive
     if [[ $quiet ]]; then
       nl -v ${pactotal:-0} -w 1 -s ' ' <(cut -f 1 "$tmpdir/search.results")
