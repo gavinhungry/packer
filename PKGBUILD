@@ -1,4 +1,4 @@
-pkgname=packer
+pkgname=packer-gh-git
 pkgver=20121030
 pkgrel=1
 pkgdesc="Bash wrapper for pacman and the AUR"
