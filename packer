@@ -663,7 +663,7 @@ if [[ $option = search || $option = searchinstall ]]; then
     for package in "${packageargs[@]}"; do
       curl -LfGs --data-urlencode "arg=$package" "$RPCURL=search" | \
       jshon -Q -e results -a -e Name -u -p -e Version -u -p -e NumVotes -u -p -e Description -u | \
-      sed 's/^$/-/' |  paste -s -d "\t\t\t\n" | sort -nr -k 3 > "$tmpdir/$package.search" &
+      sed 's/^$/-/' |  paste -s -d "\t\t\t\n" | sort -k 1 > "$tmpdir/$package.search" &
     done
     wait
     cp "$tmpdir/${packageargs[0]}.search" "$tmpdir/search.results"
