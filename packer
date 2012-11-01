@@ -269,6 +269,17 @@ isoutofdate() {
   [[ "$(jshon -Q -e results -e OutOfDate -u < "$tmpdir/$1.info")" = "1" ]]
 }
 
+installedline() {
+  aurpkg=$(echo $1 | cut -d' ' -f1)
+  aurver=$(echo $1 | cut -d' ' -f2)
+  if [ ! -z $aurpkg -a ! -z $aurver ] && existsinlocal "$aurpkg"; then
+    localversion="$(pacman -Qs "$aurpkg" | grep -F "local/$aurpkg" | cut -d ' ' -f 2)"
+    [ "$aurver" != "$localversion" ] \
+      && echo "${COLOR4}[installed: $localversion]${ENDCOLOR}" \
+      || echo "${COLOR4}[installed]${ENDCOLOR}"
+  fi
+}
+
 # $1 is prompt, $2 is file
 confirm_edit() {
   if [[ (! -f "$2") || "$noconfirm" || "$noedit" ]]; then
@@ -634,7 +645,7 @@ if [[ $option = search || $option = searchinstall ]]; then
     else
       results="$(pacman -Ss -- "${packageargs[@]}")"
       results="$(sed -r "s|^[^ ][^/]*/|$S${COLOR3}&$S${COLOR1}|" <<< "$results")"
-      results="$(sed -r "s|^([^ ]+) ([^ ]+)(.*)$|\1 $S${COLOR2}\2$S${ENDCOLOR}\3|" <<< "$results")"
+      results="$(sed -r "s|^([^ ]+) ([^ ]+)(\s?\(.*\))?(\s?\[.*])?$|\1 $S${COLOR2}\2$S${COLOR5}\3$S${COLOR4}\4$S${ENDCOLOR}|" <<< "$results")"
     fi
     if [[ $option = search ]]; then
       echo -e "$results" | fmt -"$_WIDTH" -s
@@ -677,14 +688,22 @@ if [[ $option = search || $option = searchinstall ]]; then
     if [[ $quiet ]]; then
       printf "%s\n" ${aurname[@]}
     elif [[ -s "$tmpdir/search.results" ]]; then
-      printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} (%s)\n    %s\n" $(cat "$tmpdir/search.results")
+      while read LINE; do
+        installed=$(installedline "$LINE")
+        printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${installed}\n    %s\n" $LINE
+      done < "$tmpdir/search.results"
     fi
   else
     # interactive
     if [[ $quiet ]]; then
       nl -v ${pactotal:-0} -w 1 -s ' ' <(cut -f 1 "$tmpdir/search.results")
     elif [[ -s "$tmpdir/search.results" ]]; then
-      printf "%d ${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} (%s)\n    %s\n" $(nl -v ${pactotal:-0} -w 1 < "$tmpdir/search.results")
+      count=${pactotal:-0}
+      while read LINE; do
+        installed=$(installedline "$LINE")
+        printf "$count ${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${installed}\n    %s\n" $LINE
+        let count++
+      done < "$tmpdir/search.results"
     fi
   fi | fmt -"$_WIDTH" -s
   unset IFS
