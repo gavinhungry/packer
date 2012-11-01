@@ -7,6 +7,7 @@ license="GPL"
 arch=('any')
 makedepends=('git')
 depends=('grep' 'sed' 'bash' 'curl' 'pacman' 'jshon')
+conflicts=('packer')
 optdepends=('sudo: install and update packages as non-root'
             'customizepkg: apply customizepkg modifications')
 _gitroot='https://github.com/gavinhungry/packer.git'
