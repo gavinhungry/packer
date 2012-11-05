@@ -420,7 +420,18 @@ installhandling() {
       echo -e "${COLOR6}warning:$ENDCOLOR $pkg is flagged out of date"
     fi
   done
-    
+
+  # remove duplicates
+  for I in $(seq 0 ${#aurtargets[@]}); do
+    for J in $(seq 0 $I); do
+      [ $I -ne $J ] && [ "x${aurtargets[$I]}" == "x${aurtargets[$J]}" ] && unset aurtargets[$J]
+    done
+
+    for K in $(seq 0 ${#aurdepends[@]}); do
+      [ "x${aurtargets[$I]}" == "x${aurdepends[$K]}" ] && unset aurdepends[$K]
+    done
+  done
+
   # Prompt for aur packages and their dependencies
   echo
   if [[ $pacmandepends ]]; then
