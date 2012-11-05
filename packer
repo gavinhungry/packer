@@ -40,6 +40,14 @@ if [[ -t 1 && ! $COLOR = "NO" ]]; then
 fi
 _WIDTH="$(stty size | cut -d ' ' -f 2)"
 
+# workaround for bad PKGBUILDs
+warning() {
+  return 0
+}
+error() {
+  return 0
+}
+
 trap ctrlc INT
 ctrlc() {
   echo
