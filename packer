@@ -685,9 +685,9 @@ if [[ $option = search || $option = searchinstall ]]; then
       results="$(sed -r "s|^([^ ]+) ([^ ]+)(\s?\(.*\))?(\s?\[.*])?$|\1 $S${COLOR2}\2$S${COLOR5}\3$S${COLOR4}\4$S${ENDCOLOR}|" <<< "$results")"
     fi
     if [[ $option = search ]]; then
-      echo -e "$results" | fmt -"$_WIDTH" -s
+      echo -e "$results" | fmt -"$_WIDTH" -s -p ' '
     elif [[ $interactive ]]; then  # interactive
-      echo -e "$results" | fmt -"$_WIDTH" -s | nl -v 0 -w 1 -s ' ' -b 'p^[^ ]'
+      echo -e "$results" | fmt -"$_WIDTH" -s -p ' ' | nl -v 0 -w 1 -s ' ' -b 'p^[^ ]'
     fi | sed '/^$/d'
     pacname=( $(pacman -Ssq -- "${packageargs[@]}") )
     pactotal="${#pacname[@]}"
@@ -744,7 +744,7 @@ if [[ $option = search || $option = searchinstall ]]; then
         let count++
       done < "$tmpdir/search.results"
     fi
-  fi | fmt -"$_WIDTH" -s
+  fi | fmt -"$_WIDTH" -s -p ' '
   unset IFS
 
   # Prompt and install selected numbers
