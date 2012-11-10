@@ -40,7 +40,16 @@ if [[ -t 1 && ! $COLOR = "NO" ]]; then
 fi
 _WIDTH="$(stty size | cut -d ' ' -f 2)"
 
-# workaround for bad PKGBUILDs
+# nop makepkg functions as workaround for bad PKGBUILDs
+plain() {
+  return 0
+}
+msg() {
+  return 0
+}
+msg2() {
+  return 0
+}
 warning() {
   return 0
 }
