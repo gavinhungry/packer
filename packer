@@ -291,7 +291,7 @@ installedline() {
   aurpkg=$(echo $1 | cut -d' ' -f1)
   aurver=$(echo $1 | cut -d' ' -f2)
   if [ ! -z $aurpkg -a ! -z $aurver ] && existsinlocal "$aurpkg"; then
-    localversion="$(pacman -Qs "$aurpkg" | grep -F "local/$aurpkg" | cut -d ' ' -f 2)"
+    localversion="$(pacman -Qs "${aurpkg}$" | grep -F "local/$aurpkg" | cut -d ' ' -f 2)"
     [ "$aurver" != "$localversion" ] \
       && echo -n " ${COLOR4}[installed: $localversion]${ENDCOLOR}" \
       || echo -n " ${COLOR4}[installed]${ENDCOLOR}"
