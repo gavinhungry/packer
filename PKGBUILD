@@ -1,31 +1,24 @@
 pkgname=packer-gh-git
-pkgver=20130328
+pkgver=0.276.3c5169b
 pkgrel=1
 pkgdesc="Bash wrapper for pacman and the AUR"
 url="https://github.com/gavinhungry/packer"
 license="GPL"
 arch=('any')
 makedepends=('git')
-depends=('grep' 'sed' 'bash' 'curl' 'pacman' 'jshon')
+depends=('grep' 'sed' 'bash' 'curl' 'pacman' 'jshon' 'sudo')
 conflicts=('packer')
-optdepends=('sudo: install and update packages as non-root'
-            'customizepkg: apply customizepkg modifications')
-_gitroot='https://github.com/gavinhungry/packer.git'
-_gitname='packer'
+optdepends=('customizepkg: apply customizepkg modifications')
+source=("${pkgname}::git+https://github.com/gavinhungry/packer.git#branch=master")
+md5sums=('SKIP')
 
-build() {
-  cd "${srcdir}"
-  msg "Connecting to github GIT server ..."
-  if [ -d ${_gitname} ] ; then
-    cd ${_gitname} && git pull origin
-    msg "The local files are updated."
-  else
-    git clone --depth=1 ${_gitroot} ${_gitname}
-  fi
+pkgver () {
+  cd "${srcdir}/${pkgname}"
+  echo "0.$(git rev-list --count HEAD).$(git describe --always | sed 's|-|.|g')"
 }
 
 package() {
-  cd "${srcdir}/${_gitname}"
+  cd "${srcdir}/${pkgname}"
   mkdir -p ${pkgdir}/usr/bin
   mkdir -p ${pkgdir}/usr/share/man/man8
   install -m 755 packer ${pkgdir}/usr/bin/packer
