@@ -241,7 +241,7 @@ aurbar() {
       printf "-"
     done
   fi
-  printf "%s%3s%%\r" ${endbar} ${perc}
+  printf "%s%4s%%\r" ${endbar} ${perc}
 }
 
 rpcinfo() {

@@ -1,5 +1,5 @@
 pkgname=packer-gh-git
-pkgver=0.276.3c5169b
+pkgver=0.278.55926ee
 pkgrel=1
 pkgdesc="Bash wrapper for pacman and the AUR"
 url="https://github.com/gavinhungry/packer"
