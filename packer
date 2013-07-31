@@ -316,6 +316,8 @@ confirm_edit() {
 
 # Installs packages from aur ($1 is package, $2 is dependency or explicit)
 aurinstall() {
+  echo -e "Installing AUR package: $1"
+
   dir="${TMPDIR:-/tmp}/packerbuild-$UID/$1"
   sourcemakepkgconf
 
@@ -367,6 +369,8 @@ aurinstall() {
   elif [[ $2 = explicit ]]; then
     runasroot $PACMAN ${PACOPTS[@]} -U $pkgname-*$PKGEXT
   fi
+
+  echo
 }
 
 # Goes through all of the install tests and execution ($@ is packages to be installed)
@@ -419,6 +423,7 @@ installhandling() {
   # First install the explicit pacman packages, let pacman prompt
   if [[ $pacmanpackages ]]; then
     runasroot $PACMAN "${PACOPTS[@]}" -S -- "${pacmanpackages[@]}"
+    echo
   fi
   if [[ -z $aurtargets ]]; then
     exit
@@ -476,6 +481,7 @@ installhandling() {
   # Install pacman dependencies
   if [[ $pacmandepends ]]; then
     runasroot $PACMAN --noconfirm --asdeps -S -- "${pacmandepends[@]}" || err "Installation failed."
+    echo
   fi
 
   # Install aur dependencies
