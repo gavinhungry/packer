@@ -211,9 +211,8 @@ aurbar() {
   width="$(stty size)"
   width="${width##* }"
   infolen="$(($width*6/10))"
-  if [[ $infolen < 50 ]]; then
-    infolen=50
-  fi
+  [ $infolen -lt 50 ] && infolen=50
+
   charsbefore="$((${#beginline}+${#1}+${#2}+3))"
   spaces="$(($infolen-$charsbefore))"
   barchars="$(($width-$infolen-${#beginbar}-${#endbar}-6))"
