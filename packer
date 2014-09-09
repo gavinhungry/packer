@@ -535,7 +535,7 @@ run_quick_check() {
   mkdir -p "$CHECKUPDATE_DB"
   ln -s "${DBPath}/local" "$CHECKUPDATE_DB" &> /dev/null
   fakeroot pacman -Sqy --dbpath "$CHECKUPDATE_DB" &> /dev/null
-  pacman -Qqu --dbpath "$CHECKUPDATE_DB" 2> /dev/null 
+  pacman -Qqu --dbpath "$CHECKUPDATE_DB" 2> /dev/null
 }
 
 # proceed with installation prompt
