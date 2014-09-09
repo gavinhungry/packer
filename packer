@@ -362,6 +362,7 @@ aurinstall() {
   [[ $(uname -m) == arm* ]] && MAKEPKGOPTS+=("--ignorearch")
 
   # Installation (makepkg and pacman)
+  rm -f *$PKGEXT
   if [[ $UID -eq 0 ]]; then
     makepkg $MAKEPKGOPTS --asroot -f
   else
@@ -369,10 +370,14 @@ aurinstall() {
   fi
 
   [[ $? -ne 0 ]] && echo "The build failed." && return 1
+  pkgtarfiles=""
+  for i in "${pkgname[@]}"; do
+    pkgtarfiles="$pkgtarfiles $i-*$PKGEXT"
+  done
   if  [[ $2 = dependency ]]; then
-    runasroot $PACMAN ${PACOPTS[@]} --asdeps -U $pkgname-*$PKGEXT
+    runasroot $PACMAN ${PACOPTS[@]} --asdeps -U $pkgtarfiles
   elif [[ $2 = explicit ]]; then
-    runasroot $PACMAN ${PACOPTS[@]} -U $pkgname-*$PKGEXT
+    runasroot $PACMAN ${PACOPTS[@]} -U $pkgtarfiles
   fi
 
   echo
