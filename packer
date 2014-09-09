@@ -588,6 +588,7 @@ while [[ $1 ]]; do
         '-Ss') option=search ;;
         '-Ssq'|'-Sqs') option=search ; quiet='1' ;;
         '-Si') option=info ;;
+        '-Sy'|'-Syy') option=reposync; pacmanarg="${1/a/}" ;;
         -S*u*) option=update ; pacmanarg="${1/a/}" ;;
       esac ;;
 
@@ -621,6 +622,12 @@ fi
 
 # Sanity checks
 [[ $option ]] || option="searchinstall"
+
+if [[ $option == reposync ]]; then
+  runasroot $PACMAN "${PACOPTS[@]}" "$pacmanarg"
+  exit $?
+fi
+
 [[ $option != "update" && -z $packageargs ]] && err "Must specify a package."
 
 # Install (-S) handling
