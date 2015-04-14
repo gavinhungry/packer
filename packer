@@ -625,6 +625,7 @@ fi
 
 if [[ $option == reposync ]]; then
   runasroot $PACMAN "${PACOPTS[@]}" "$pacmanarg"
+  installhandling "${packageargs[@]}"
   exit $?
 fi
 
@@ -712,6 +713,8 @@ if [[ $option = update ]]; then
     fi
     echo " local database is up to date"
   fi
+
+  installhandling "${packageargs[@]}"
 fi
 
 # Download (-G) handling
