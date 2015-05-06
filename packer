@@ -364,7 +364,9 @@ aurinstall() {
   # Installation (makepkg and pacman)
   rm -f *$PKGEXT
   if [[ $UID -eq 0 ]]; then
-    makepkg $MAKEPKGOPTS --asroot -f
+    id pacman &> /dev/null || useradd pacman -rd /var/empty
+    chown -R pacman:pacman .
+    su pacman -c "makepkg $MAKEPKGOPTS -f"
   else
     makepkg $MAKEPKGOPTS -f
   fi
