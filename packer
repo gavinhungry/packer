@@ -24,8 +24,10 @@ makepkgconf='/etc/makepkg.conf'
 usermakepkgconf="$HOME/.makepkg.conf"
 pacmanconf='/etc/pacman.conf'
 
-RPCURL="https://aur.archlinux.org/rpc.php?type"
-PKGURL="https://aur.archlinux.org"
+AUR_DOMAIN=aur4.archlinux.org
+RPCURL="https://${AUR_DOMAIN}/rpc.php?type"
+PKGURL="https://${AUR_DOMAIN}"
+PKGBUILDURL="https://${AUR_DOMAIN}/cgit/aur.git/plain/PKGBUILD?h"
 
 if [[ -t 1 && ! $COLOR = "NO" ]]; then
   COLOR1='\e[1;39m'
@@ -263,8 +265,7 @@ pkglink() {
 # downloads pkgbuild ($1), edits if $2 is set
 pkginfo() {
   if ! [[ -f "$tmpdir/$1.PKGBUILD" ]]; then
-    pkgpath=$(pkglink $1)
-    curl -Lfs "${pkgpath%/*}/PKGBUILD" > "$tmpdir/$1.PKGBUILD"
+    curl -Lfs "${PKGBUILDURL}=$1" > "$tmpdir/$1.PKGBUILD"
     if [[ $2 ]]; then
       # rename for syntax highlighting
       ln -sf "$tmpdir/$1.PKGBUILD" "$tmpdir/PKGBUILD"
@@ -515,7 +516,7 @@ installhandling() {
 }
 
 run_quick_check() {
-  bigurl="https://aur.archlinux.org/rpc.php?type=multiinfo"
+  bigurl="https://${AUR_DOMAIN}/rpc.php?type=multiinfo"
   for p in $(pacman -Qqm); do
     bigurl="$bigurl&arg\[\]=$p"
   done
