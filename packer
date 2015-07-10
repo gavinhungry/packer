@@ -637,7 +637,7 @@ fi
 # Install (-S) handling
 if [[ $option = install ]]; then
   installhandling "${packageargs[@]}"
-  exit
+  exit $?
 fi
 
 # Update (-Su) handling
@@ -713,6 +713,7 @@ if [[ $option = update ]]; then
     if [[ $newpackages ]]; then
       auronly='1'
       installhandling "${newpackages[@]}"
+      exit $?
     fi
     echo " local database is up to date"
   fi
