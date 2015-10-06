@@ -253,7 +253,7 @@ aurbar() {
 
 rpcinfo() {
   if ! [[ -f "$tmpdir/$1.info" ]]; then
-    curl -LfGs --data-urlencode "arg=$1" "$RPCURL=info" > "$tmpdir/$1.info"
+    curl -LfGs --data-urlencode "arg=$1" "${RPCURL}=info" > "$tmpdir/$1.info"
   fi
 }
 
@@ -516,7 +516,7 @@ installhandling() {
 }
 
 run_quick_check() {
-  bigurl="https://${AUR_DOMAIN}/rpc.php?type=multiinfo"
+  bigurl="${RPCURL}=multiinfo"
   for p in $(pacman -Qqm); do
     bigurl="$bigurl&arg\[\]=$p"
   done
@@ -763,7 +763,7 @@ if [[ $option = search || $option = searchinstall ]]; then
   if [[ $incaur ]]; then
     # Aur searching and tmpfile preparation
     for package in "${packageargs[@]}"; do
-      curl -LfGs --data-urlencode "arg=$package" "$RPCURL=search" | \
+      curl -LfGs --data-urlencode "arg=$package" "${RPCURL}=search" | \
       jshon -Q -e results -a -e Name -u -p -e Version -u -p -e NumVotes -u -p -e OutOfDate -u -p -e Description -u | \
       sed 's/^$/-/' |  paste -s -d "\t\t\t\t\n" | sort -k 1 > "$tmpdir/$package.search" &
     done
