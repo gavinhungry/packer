@@ -25,7 +25,9 @@ usermakepkgconf="$HOME/.makepkg.conf"
 pacmanconf='/etc/pacman.conf'
 
 AUR_DOMAIN=aur.archlinux.org
-RPCURL="https://${AUR_DOMAIN}/rpc.php?type"
+AUR_VERSION=4
+
+RPCURL="https://${AUR_DOMAIN}/rpc.php?v=${AUR_VERSION}&type"
 PKGURL="https://${AUR_DOMAIN}"
 PKGBUILDURL="https://${AUR_DOMAIN}/cgit/aur.git/plain/PKGBUILD?h"
 
@@ -37,6 +39,7 @@ if [[ -t 1 && ! $COLOR = "NO" ]]; then
   COLOR5='\e[1;34m'
   COLOR6='\e[1;33m'
   COLOR7='\e[1;31m'
+  COLOR8='\e[0;33m'
   ENDCOLOR='\e[0m'
   S='\\'
 fi
@@ -305,7 +308,7 @@ installedline() {
 }
 
 outofdateline() {
-  ood=$(echo $1 | cut -d' ' -f4)
+  ood=$(echo $1 | cut -d' ' -f5)
   [ "$ood" != "null" ] && echo -n " ${COLOR7}(out-of-date)${ENDCOLOR}"
 }
 
@@ -764,8 +767,8 @@ if [[ $option = search || $option = searchinstall ]]; then
     # Aur searching and tmpfile preparation
     for package in "${packageargs[@]}"; do
       curl -LfGs --data-urlencode "arg=$package" "${RPCURL}=search" | \
-      jshon -Q -e results -a -e Name -u -p -e Version -u -p -e NumVotes -u -p -e OutOfDate -u -p -e Description -u | \
-      sed 's/^$/-/' |  paste -s -d "\t\t\t\t\n" | sort -k 1 > "$tmpdir/$package.search" &
+      jshon -Q -e results -a -e Name -u -p -e Version -u -p -e NumVotes -u -p -e Popularity -u -p -e OutOfDate -u -p -e Description -u | \
+      sed 's/^$/-/' |  paste -s -d "\t\t\t\t\t\n" | sort -k 1 > "$tmpdir/$package.search" &
     done
     wait
     cp "$tmpdir/${packageargs[0]}.search" "$tmpdir/search.results"
@@ -793,7 +796,7 @@ if [[ $option = search || $option = searchinstall ]]; then
       while read LINE; do
         installed=$(installedline "$LINE")
         outofdate=$(outofdateline "$LINE")
-        printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
+        printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${COLOR8}(%0.2f)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
       done < "$tmpdir/search.results"
     fi
   elif [[ $interactive ]]; then
@@ -805,7 +808,7 @@ if [[ $option = search || $option = searchinstall ]]; then
       while read LINE; do
         installed=$(installedline "$LINE")
         outofdate=$(outofdateline "$LINE")
-        printf "$count ${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
+        printf "$count ${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${COLOR8}(%0.2f)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
         let count++
       done < "$tmpdir/search.results"
     fi
