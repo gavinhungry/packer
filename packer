@@ -306,7 +306,7 @@ installedline() {
 
 outofdateline() {
   ood=$(echo $1 | cut -d' ' -f4)
-  [ "$ood" != "0" ] && echo -n " ${COLOR7}(out-of-date)${ENDCOLOR}"
+  [ "$ood" != "null" ] && echo -n " ${COLOR7}(out-of-date)${ENDCOLOR}"
 }
 
 # $1 is prompt, $2 is file
