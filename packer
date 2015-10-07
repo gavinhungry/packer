@@ -796,7 +796,7 @@ if [[ $option = search || $option = searchinstall ]]; then
       while read LINE; do
         installed=$(installedline "$LINE")
         outofdate=$(outofdateline "$LINE")
-        printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${COLOR8}(%0.2f)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
+        LC_NUMERIC=C printf "${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${COLOR8}(%0.2f)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
       done < "$tmpdir/search.results"
     fi
   elif [[ $interactive ]]; then
@@ -808,7 +808,7 @@ if [[ $option = search || $option = searchinstall ]]; then
       while read LINE; do
         installed=$(installedline "$LINE")
         outofdate=$(outofdateline "$LINE")
-        printf "$count ${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${COLOR8}(%0.2f)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
+        LC_NUMERIC=C printf "$count ${COLOR3}aur/${COLOR1}%s ${COLOR2}%s${ENDCOLOR} ${COLOR6}(%s)${ENDCOLOR} ${COLOR8}(%0.2f)${ENDCOLOR}%c\b \b${installed}${outofdate}\n    %s\n" $LINE
         let count++
       done < "$tmpdir/search.results"
     fi
