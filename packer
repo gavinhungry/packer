@@ -65,7 +65,7 @@ error() {
 trap ctrlc INT
 ctrlc() {
   echo
-  exit
+  exit 130
 }
 
 err() {
