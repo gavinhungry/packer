@@ -25,7 +25,7 @@ usermakepkgconf="$HOME/.makepkg.conf"
 pacmanconf='/etc/pacman.conf'
 
 AUR_DOMAIN=aur.archlinux.org
-AUR_VERSION=4
+AUR_VERSION=5
 
 RPCURL="https://${AUR_DOMAIN}/rpc.php?v=${AUR_VERSION}&type"
 PKGURL="https://${AUR_DOMAIN}"
@@ -293,7 +293,7 @@ aurversionisnewer() {
 
 isoutofdate() {
   rpcinfo "$1"
-  [[ "$(jshon -Q -e results -a -e OutOfDate -u < "$tmpdir/$1.info")" != "null" ]]
+  [[ "$(jshon -Q -e results -a -e OutOfDate -u < "$tmpdir/$1.info")" = "1" ]]
 }
 
 installedline() {
@@ -520,6 +520,7 @@ installhandling() {
 
 run_quick_check() {
   bigurl="${RPCURL}=multiinfo"
+
   for p in $(pacman -Qqm); do
     bigurl="$bigurl&arg\[\]=$p"
   done
