@@ -695,6 +695,8 @@ if [[ $option = update ]]; then
           newpackages+=("$pkg")
         elif [[ ${_darcstrunk} || ${_cvsroot} || ${_gitroot} || ${_svntrunk} || ${_bzrtrunk} || ${_hgroot} ]]; then
           newpackages+=("$pkg")
+        elif [[ "$pkg" == *-darcs || "$pkg" == *-cvs || "$pkg" == *-git || "$pkg" == *-svn || "$pkg" == *-bzr || "$pkg" == *-hg ]]; then
+          newpackages+=("$pkg")
         fi
       done
     else
