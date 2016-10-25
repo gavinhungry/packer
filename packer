@@ -596,7 +596,8 @@ while [[ $1 ]]; do
         '-Ssq'|'-Sqs') option=search ; quiet='1' ;;
         '-Si') option=info ;;
         '-Sy'|'-Syy') option=reposync; pacmanarg="${1/a/}" ;;
-        -S*u*) option=update ; pacmanarg="${1/a/}" ;;
+        -S*w*) option=downloadonly; pacmanarg="${1/a/}" ;;
+        -S*u*) option=update; pacmanarg="${1/a/}" ;;
       esac ;;
 
     '-G') option=download ;;
@@ -629,6 +630,11 @@ fi
 
 # Sanity checks
 [[ $option ]] || option="searchinstall"
+
+if [[ $option == downloadonly ]]; then
+  runasroot $PACMAN "${PACOPTS[@]}" "$pacmanarg" "${packageargs[@]}"
+  exit $?
+fi
 
 if [[ $option == reposync ]]; then
   runasroot $PACMAN "${PACOPTS[@]}" "$pacmanarg"
