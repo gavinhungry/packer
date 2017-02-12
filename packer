@@ -360,6 +360,8 @@ aurinstall() {
 
   # Allow user to edit .install
   unset install
+  unset pkgname
+
   . PKGBUILD
   confirm_edit "${COLOR1}Edit $install? [y/N]${ENDCOLOR} " "$install"
 
@@ -380,6 +382,7 @@ aurinstall() {
   for i in "${pkgname[@]}"; do
     pkgtarfiles="$pkgtarfiles $i-*$PKGEXT"
   done
+  pkgtarfiles=$(echo $pkgtarfiles | tr ' ' '\n' | sort -u)
   if  [[ $2 = dependency ]]; then
     runasroot $PACMAN ${PACOPTS[@]} --asdeps -U $pkgtarfiles
   elif [[ $2 = explicit ]]; then
