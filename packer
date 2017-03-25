@@ -159,7 +159,8 @@ scrapeaurdeps() {
   pkginfo "$1" "$preview"
   . "$tmpdir/$1.PKGBUILD"
   IFS=$'\n'
-  dependencies=( $(echo -e "${depends[*]}\n${makedepends[*]}" | sed -e 's/=.*//' -e 's/>.*//' -e 's/<.*//'| sort -u) )
+  depends_arch=depends_$arch[*]
+  dependencies=( $(echo -e "${depends[*]}\n${!depends_arch}\n${makedepends[*]}" | sed -e 's/=.*//' -e 's/>.*//' -e 's/<.*//'| sort -u) )
   unset IFS
 }
 
