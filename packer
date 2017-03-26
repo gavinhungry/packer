@@ -884,6 +884,8 @@ if [[ $option = info ]]; then
       echo -e "${COLOR1}Repository     : ${COLOR3}aur"
       echo -e "${COLOR1}Name           : $pkgname"
       echo -e "${COLOR1}Version        : ${COLOR2}$pkgver-$pkgrel"
+      echo -e "${COLOR1}Description    : ${ENDCOLOR}$pkgdesc"
+      echo -e "${COLOR1}Architecture   : ${ENDCOLOR}${arch[@]}"
       echo -e "${COLOR1}URL            : ${COLOR4}$url"
       echo -e "${COLOR1}Licenses       : ${ENDCOLOR}${license[@]}"
       echo -e "${COLOR1}Groups         : ${ENDCOLOR}${groups[@]:-None}"
@@ -907,8 +909,6 @@ if [[ $option = info ]]; then
 
       echo -e "${COLOR1}Conflicts With : ${ENDCOLOR}${conflicts[@]:-None}"
       echo -e "${COLOR1}Replaces       : ${ENDCOLOR}${replaces[@]:-None}"
-      echo -e "${COLOR1}Architecture   : ${ENDCOLOR}${arch[@]}"
-      echo -e "${COLOR1}Description    : ${ENDCOLOR}$pkgdesc"
       echo
     fi
   done
