@@ -874,7 +874,7 @@ if [[ $option = info ]]; then
       results="$(sed -r "s|^[^ ][^:]*:|$S${COLOR1}&$S${ENDCOLOR}|" <<< "$results")"
       echo -e "$results\n"
       exit
-    else # Check to see if it is in the aur
+    elif [[ $incaur ]]; then # Check to see if it is in the aur
       pkginfo "$package" "$preview"
       [[ -s "$tmpdir/$package.PKGBUILD" ]] || err "${COLOR7}error:${ENDCOLOR} package '$package' was not found"
       . "$tmpdir/$package.PKGBUILD"
