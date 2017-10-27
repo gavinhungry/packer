@@ -150,7 +150,7 @@ providedinpacman() {
 
 # Tests whether $1 exists in a pacman group
 existsinpacmangroup() {
-  [[ $(pacman -Sgq "$1") ]]
+  [[ $($PACMAN -Sgq "$1") ]]
 }
 
 # Tests whether $1 exists locally
@@ -175,7 +175,7 @@ finddeps() {
   pacmandeps=()
   aurdeps=()
   scrapeaurdeps "$1"
-  missingdeps=( $(pacman -T "${dependencies[@]}") )
+  missingdeps=( $($PACMAN -T "${dependencies[@]}") )
   while [[ $missingdeps ]]; do
     checkdeps=()
     for dep in "${missingdeps[@]}"; do
@@ -203,7 +203,7 @@ finddeps() {
     for dep in "${checkdeps[@]}"; do
       scrapeaurdeps "$dep"
       for depdep in "${dependencies[@]}"; do
-        [[ $(pacman -T "$depdep") ]] && missingdeps+=("$depdep")
+        [[ $($PACMAN -T "$depdep") ]] && missingdeps+=("$depdep")
       done
     done
   done
@@ -305,7 +305,7 @@ installedline() {
   aurpkg=$(echo $1 | cut -d' ' -f1)
   aurver=$(echo $1 | cut -d' ' -f2)
   if [ ! -z $aurpkg -a ! -z $aurver ] && existsinlocal "$aurpkg"; then
-    localversion="$(pacman -Qs "${aurpkg}$" | grep -F "local/$aurpkg" | cut -d ' ' -f 2)"
+    localversion="$($PACMAN -Qs "${aurpkg}$" | grep -F "local/$aurpkg" | cut -d ' ' -f 2)"
     [ "$aurver" != "$localversion" ] \
       && echo -n " ${COLOR4}[installed: $localversion]${ENDCOLOR}" \
       || echo -n " ${COLOR4}[installed]${ENDCOLOR}"
@@ -455,7 +455,7 @@ installhandling() {
   # Test if aurpackages are already installed; echo warning if so
   for pkg in "${aurtargets[@]}"; do
     if existsinlocal "$pkg"; then
-      localversion="$(pacman -Qs "${pkg}$" | grep -F "local/$pkg" | cut -d ' ' -f 2)"
+      localversion="$($PACMAN -Qs "${pkg}$" | grep -F "local/$pkg" | cut -d ' ' -f 2)"
       if ! aurversionisnewer "$pkg" "$localversion"; then
         echo -e "${COLOR6}warning:$ENDCOLOR $pkg-$localversion is up to date -- reinstalling"
       fi
@@ -529,7 +529,7 @@ installhandling() {
 run_quick_check() {
   bigurl="${RPCURL}=multiinfo"
 
-  for p in $(pacman -Qqm); do
+  for p in $($PACMAN -Qqm); do
     bigurl="$bigurl&arg\[\]=$p"
   done
   parsed_aur="$(curl -s "$bigurl" | \
@@ -764,9 +764,9 @@ if [[ $option = search || $option = searchinstall ]]; then
   # Pacman searching
   if ! [[ $auronly ]]; then
     if [[ $quiet ]]; then
-      results="$(pacman -Ssq -- "${packageargs[@]}")"
+      results="$($PACMAN -Ssq -- "${packageargs[@]}")"
     else
-      results="$(pacman -Ss -- "${packageargs[@]}")"
+      results="$($PACMAN -Ss -- "${packageargs[@]}")"
       results="$(sed -r "s|^[^ ][^/]*/|$S${COLOR3}&$S${COLOR1}|" <<< "$results")"
       results="$(sed -r "s|^([^ ]+) ([^ ]+)(\s?\(.*\))?(\s?\[.*])?$|\1 $S${COLOR2}\2$S${COLOR5}\3$S${COLOR4}\4$S${ENDCOLOR}|" <<< "$results")"
     fi
@@ -775,7 +775,7 @@ if [[ $option = search || $option = searchinstall ]]; then
     elif [[ $interactive ]]; then  # interactive
       echo -e "$results" | fmt -"$_WIDTH" -s -p ' ' | nl -v 0 -w 1 -s ' ' -b 'p^[^ ]'
     fi | sed '/^$/d'
-    pacname=( $(pacman -Ssq -- "${packageargs[@]}") )
+    pacname=( $($PACMAN -Ssq -- "${packageargs[@]}") )
     pactotal="${#pacname[@]}"
   else
     pactotal=0
@@ -871,7 +871,7 @@ if [[ $option = info ]]; then
   sourcemakepkgconf
   for package in "${packageargs[@]}"; do
     if ! [[ $auronly ]] && existsinpacman "$package"; then
-      results="$(pacman -Si -- "$package")"
+      results="$($PACMAN -Si -- "$package")"
       results="$(sed -r "s|^(Repository[^:]*:)(.*)$|\1$S${COLOR3}\2$S${ENDCOLOR}|" <<< "$results")"
       results="$(sed -r "s|^(Name[^:]*:)(.*)$|\1$S${COLOR1}\2$S${ENDCOLOR}|" <<< "$results")"
       results="$(sed -r "s|^(Version[^:]*:)(.*)$|\1$S${COLOR2}\2$S${ENDCOLOR}|" <<< "$results")"
