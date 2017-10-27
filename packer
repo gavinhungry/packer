@@ -92,7 +92,8 @@ usage() {
   echo '    --noconfirm  - do not prompt for any confirmation'
   echo '    --noedit     - do not prompt to edit files'
   echo '    --quickcheck - check for updates and exit'
-  echo '    --aur        - include AUR actions'
+  echo '    --aur, -a    - include AUR actions'
+  echo '    --auronly    - only check the AUR (implies --aur)'
   echo '    --devel      - update devel packages during -Su'
   echo '    --skipinteg  - when using makepkg, do not check md5s'
   echo '    --preview    - edit pkgbuild before sourcing'
@@ -615,6 +616,7 @@ while [[ $1 ]]; do
     '--noconfirm') noconfirm='1' PACOPTS+=("--noconfirm");;
     '--noedit') noedit='1' ;;
     '--aur'|'-a') incaur='1' ;;
+    '--auronly') incaur='1'; auronly='1' ;;
     '--quickcheck') quickcheck='1' ;;
     '--devel') devel='1' ;;
     '--skipinteg') MAKEPKGOPTS="--skipinteg" ;;
